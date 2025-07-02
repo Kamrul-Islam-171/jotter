@@ -13,11 +13,11 @@ const router = express.Router();
 
 router.get('/check-user-storage', UserController.checkUserStorage);
 router.get('/all-customers', UserController.getAllCustomers)
-router.get('/:email', UserController.getSingleCustomer);
-router.patch('/:userId', Auth('admin'), UserController.unblockBlockUser);
-router.post('/change-password', Auth("customer"), ValidateRequest(UserValidation.changePasswordValidationSchema), UserController.changePassword)
+router.get('/me', Auth(), UserController.getMe);
+// router.get('/:email', UserController.getSingleCustomer);
+
+router.post('/change-password', Auth(), ValidateRequest(UserValidation.changePasswordValidationSchema), UserController.changePassword)
 router.post('/forget-password', ValidateRequest(UserValidation.forgetPassValidation), UserController.forgetPassword)
 router.post('/reset-password', ValidateRequest(UserValidation.resetPassValidation), UserController.resetPassword)
-
 
 export const UserRoutes = router;

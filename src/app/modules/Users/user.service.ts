@@ -33,6 +33,8 @@ const getSingleUsersFromDB = async (email:string) => {
   return result;
 };
 
+
+
 const blockUnblockUser = async (id: string, query: Record<string, unknown>) => {
   const user = await User.findOne(new mongoose.Types.ObjectId(id));
   if (!user) {
@@ -52,36 +54,23 @@ const blockUnblockUser = async (id: string, query: Record<string, unknown>) => {
 
 const changePassword = async (
   userData: JwtPayload,
-  payload: { oldPassword: string; newPassword: string }
+  payload: { old_password: string; new_password: string, confirm_password:string }
 ) => {
   // console.log(userData)
+  
   const {email} = userData;
-  const user = await User.findOne({email}).select("email password isDeleted"); // because in user.model.ts i used return await User.findOne({email}).select("+password");
-  // console.log(user)
+  const user = await User.findOne({email}).select("email password isDeleted"); 
 
-  // const user = await User.isUserExistsByCustomID(userData?.id);
-
-
-  if (!user) {
+  if (!user || user.isDeleted) {
     throw new AppError(httpStatus.NOT_FOUND, "User is not found!");
   }
 
-  // const isUserDeleted = user?.isDeleted;
-  // if (isUserDeleted) {
-  //   throw new AppError(httpStatus.FORBIDDEN, "User is Deleted!");
-  // }
-
-
-  const userStauts = user?.isDeleted;
-  if (userStauts) {
-    throw new AppError(httpStatus.FORBIDDEN, "User is Deleted!");
+  if(payload.new_password !== payload.confirm_password) {
+    throw new AppError(httpStatus.NOT_ACCEPTABLE, 'confirm pass does not match')
   }
 
-
-
-
   const isPasswordMatched = await User.isPasswordMaatched(
-    payload?.oldPassword,
+    payload?.old_password,
     user?.password
   );
   if (!isPasswordMatched) {
@@ -89,18 +78,17 @@ const changePassword = async (
   }
 
 
-  const newHashedPass = await bcrypt.hash(payload?.newPassword, 12);
+  const newHashedPass = await bcrypt.hash(payload?.new_password, 12);
 
   await User.findOneAndUpdate(
-    { email: userData.email, role: userData.role },
+    { email: userData.email},
     {
       password: newHashedPass,
-      needsPasswordChange: false,
-      passwordChangeAt: new Date(),
+      // passwordChangeAt: new Date(),
     }
   );
 
-  return null; // pass pathano jabe na. tai null
+  return null; 
 };
 
 const forgetPass = async(email:string) => {
@@ -170,6 +158,13 @@ const getUserStorage = async() => {
   console.log(sotrageKb.toFixed(2))
 }
 
+const getMe = async(UserData:JwtPayload) => {
+  // console.log(UserData);
+  const {email} = UserData;
+  const res = await User.findOne({email});
+  return res;
+}
+
 export const UserService = {
   createUserIngoDB,
   blockUnblockUser,
@@ -178,6 +173,7 @@ export const UserService = {
   changePassword,
   forgetPass,
   resetPassword,
-  getUserStorage
+  getUserStorage,
+  getMe
 };
 
