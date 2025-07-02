@@ -12,8 +12,9 @@ const createUserValidation = z.object({
 const changePasswordValidationSchema = z.object({
     body : z.object({
         
-        oldPassword:z.string({required_error:"oldPassword is required !"}),
-        newPassword:z.string({required_error:"newPassword is required !"})
+        old_password:z.string({required_error:"oldPassword is required !"}),
+        new_password:z.string({required_error:"newPassword is required !"}),
+        confirm_password:z.string({required_error:"Confirm Password is required !"})
     })
 })
 

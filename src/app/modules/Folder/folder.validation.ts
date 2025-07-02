@@ -9,7 +9,14 @@ const FolderValidationSchema = z.object({
         parentId: z.boolean().optional()
     })
 })
+const FolderUpdateValidationSchema = z.object({
+    body: z.object({
+        newName: z.string({required_error:"Folder name is required"}),
+        email: z.string({required_error:"User Email is required"}),
+    })
+})
 
 export const ForlderValidation = {
-    FolderValidationSchema
+    FolderValidationSchema,
+    FolderUpdateValidationSchema
 }

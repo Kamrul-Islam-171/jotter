@@ -7,15 +7,11 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../modules/Users/user.model";
 import httpStatus from "http-status";
-import { TUserRole } from "../modules/Users/user.interface";
-const Auth = (...requiredRole: TUserRole[]) => {
+
+const Auth = () => {
     return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
      
       const token = req.headers.authorization;
-      // console.log("token = ",token)
-      // if (token && token.startsWith('Bearer ')) {
-      //   token = token.split(' ')[1]; // Extract the actual token after "Bearer"
-      // }
       
       if (!token) {
         throw new AppError(httpStatus.UNAUTHORIZED, "You are not Authorized!");
@@ -29,33 +25,24 @@ const Auth = (...requiredRole: TUserRole[]) => {
   
       // console.log(decoded)
   
-      const {role, email, iat} = decoded;
+      const { email, iat} = decoded;
   
       const user = await User.isUserExistsByEmail(email);
-  
-      
+
       if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, "User is not found!");
       }
    
     
     
-      const userStatus = user?.isBlocked;
+      const userStatus = user?.isDeleted;
       if(userStatus) {
           throw new AppError(httpStatus.UNAUTHORIZED, "You are not Authorized!");
-      }
-  
-  
-  
-      if (requiredRole && !requiredRole.includes(role)) {
-        throw new AppError(httpStatus.UNAUTHORIZED, "You are not Authorized!");
       }
   
       //then ei id r role amra req e add kore dibo. jate pore req theke ei data nite pari
       // er jonno interface folder e index.d.ts file lagbe
       req.user = decoded as JwtPayload;
-  
-  
       next();
     });
   };
