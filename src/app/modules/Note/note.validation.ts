@@ -9,6 +9,14 @@ const NoteValidationSchema = z.object({
     })
 })
 
+const NoteUpdateValidationSchema = z.object({
+    body: z.object({
+        newName: z.string({required_error:"Folder name is required"}),
+        email: z.string({required_error:"User Email is required"}),
+    })
+})
+
 export const NoteValidation = {
-    NoteValidationSchema
+    NoteValidationSchema,
+    NoteUpdateValidationSchema
 }

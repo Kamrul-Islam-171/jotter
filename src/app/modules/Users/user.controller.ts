@@ -112,6 +112,19 @@ const checkUserStorage = catchAsync(async(req, res) => {
         // data: null
     })
 })
+const getMe = catchAsync(async(req, res) => {
+    
+    
+    
+    const user = await UserService.getMe(req.user);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'My data retrivied Successfully',
+        data: user
+        // data: null
+    })
+})
 
 
 
@@ -120,6 +133,7 @@ const checkUserStorage = catchAsync(async(req, res) => {
 
 export const UserController = {
     createUser,
+    getMe,
     unblockBlockUser,
     getAllCustomers,
     getSingleCustomer,

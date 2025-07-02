@@ -19,7 +19,8 @@ export const sendFiletoCloudinary = async (
   const uploadResult = await cloudinary.uploader
     .upload(path, {
       public_id: fileName,
-      resource_type: 'auto' //Allows both image and PDF
+      resource_type: 'raw', //Allows both image and PDF,
+      pages:true
     })
     .catch((error) => {
       console.log(error);
@@ -45,7 +46,7 @@ const storage = multer.diskStorage({
     cb(null, process.cwd() + '/uploads');
   },
   filename: function (req, file, cb) {
-    // console.log(file);
+    // console.log("files   = ", file);
     const extension = file?.mimetype.split('/')[1];
     // console.log(ext)
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

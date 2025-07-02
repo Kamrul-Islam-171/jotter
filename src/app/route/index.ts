@@ -5,6 +5,7 @@ import { AuthValidationRoute } from "../modules/auth/auth.route";
 import { FolderRoutes } from "../modules/Folder/folder.route";
 import { NoteRoutes } from "../modules/Note/note.route";
 import { ImportRoutes } from "../modules/ImportFile/ImportFile.route";
+import { commonRoutes } from "../modules/Common/common.route";
 
 
 const router = Router();
@@ -30,6 +31,10 @@ const moduleroutes = [
     {
         path: '/import',
         route: ImportRoutes
+    },
+    {
+        path: '/all',
+        route: commonRoutes
     },
    
 
